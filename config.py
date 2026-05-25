@@ -24,6 +24,10 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Data Pipeline Outputs
 MATRIX_CSV = os.path.join(OUTPUT_DIR, "pangenome_matrix.csv")
 STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
+
+# Visualization Outputs (Check these names carefully!)
+PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
+HEATMAP_PLOT = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
 PCA_PLOT = os.path.join(OUTPUT_DIR, "pca_clusters.png")
 TSNE_PLOT = os.path.join(OUTPUT_DIR, "tsne_clusters.png")
 NN_PLOT = os.path.join(OUTPUT_DIR, "nn_latent_space.png")

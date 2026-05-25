@@ -58,7 +58,7 @@ def parse_single_gff(gff_path):
                             │    └─────────────── Capture boundary starts here
                             └──────────────────── Look for this literal text first
                 """
-                gene_match = re.search(r"gene=([^;])+", attributes)
+                gene_match = re.search(r"gene=([^;]+)", attributes)
                 product_match = re.search(r"product=([^;]+)", attributes)
 
                 """
@@ -146,23 +146,23 @@ def run_matrix_generation(data_dir=config.DATA_DIR, output_path=config.MATRIX_CS
             f"- {strain_id}: Extracted {len(strain_gene_sets[strain_id])} unique functional genes."
         )
 
-        # 3. Build master list of unique genes, sorted alphabetically
-        """
-        Take Union: {"paaa", "ente", "gyra"} U {"ente", "gyra", "dnad"} U ... 
-        """
-        global_panenome_genes = sorted(list(set.union(*strain_gene_sets.values())))
-        print(
-            f"Global Pangenome vector built. Total unique features: {len(global_panenome_genes)}"
-        )
+    # 3. Build master list of unique genes, sorted alphabetically
+    """
+    Take Union: {"paaa", "ente", "gyra"} U {"ente", "gyra", "dnad"} U ... 
+    """
+    global_panenome_genes = sorted(list(set.union(*strain_gene_sets.values())))
+    print(
+        f"Global Pangenome vector built. Total unique features: {len(global_panenome_genes)}"
+    )
 
-        # 4. Vectorize
-        pangenome_matrix = vectorize_pangenome(strain_gene_sets, global_panenome_genes)
+    # 4. Vectorize
+    pangenome_matrix = vectorize_pangenome(strain_gene_sets, global_panenome_genes)
 
-        # 5. Export results
-        pangenome_matrix.to_csv(output_path)
-        print(f"Success! Binary Matrix saved directly to: {output_path}\n")
+    # 5. Export results
+    pangenome_matrix.to_csv(output_path)
+    print(f"Success! Binary Matrix saved directly to: {output_path}\n")
 
-        return pangenome_matrix
+    return pangenome_matrix
 
 
 if __name__ == "__main__":

@@ -1,0 +1,5 @@
+genomic_layer,gene_count,percentage_of_total
+Core,664,10.31857031857032
+Shell,5771,89.68142968142968
+Cloud,0,0.0
+Total_Pangenome,6435,100.0
