@@ -24,6 +24,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Data Pipeline Outputs
 MATRIX_CSV = os.path.join(OUTPUT_DIR, "pangenome_matrix.csv")
 STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
+EMBEDDING_CSV = os.path.join(OUTPUT_DIR, "autoencoder_latent_coords.csv")
 
 # Visualization Outputs (Check these names carefully!)
 PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
