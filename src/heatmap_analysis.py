@@ -52,39 +52,52 @@ def run_heatmap_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.HEATMAP
         return None
 
     # 2. Configure plotting
-    cmap = sns.color_palette(["#f2f2f2", "#2b5c8f"])  # absense = white, presence = blue
+    cmap = sns.color_palette(["#f2f2f2", "#2b5c8f"])  # absence = white, presence = blue
 
     # Determine sizing adjustments based on feature scale
-    # If the gene pool is still wide, we compress the x-axis labels
     show_gene_labels = df_accessory.shape[1] <= 50
     
-    # pre-computing row_linkage with SciPy 
     print("Computing stable hierarchical linkage trees...")
     row_linkage = sch.linkage(df_accessory, method="average", metric="jaccard")
 
+    # Turn off the color bar completely
     g = sns.clustermap(
         df_accessory,
         row_linkage=row_linkage, 
-        #col_linkage=col_linkage,
         col_cluster=False,
         cmap=cmap,
-        figsize=(10, 8),
-        cbar_kws={"label": "Gene Presence (1: Blue, 0: Gray)", "ticks": [0, 1]},
-        xticklabels=show_gene_labels,  # hide gene labels if too dense
+        figsize=(11, 7),
+        cbar=False,
+        xticklabels=show_gene_labels,  
         yticklabels=True,
         linewidths=0.1 if df_accessory.shape[1] <= 100 else 0.0,
+        dendrogram_ratio=(0.15, 0.03)
     )
+    # Completely hide the leftover "ghost" colorbar axis box and numbers
+    g.ax_cbar.set_visible(False)
 
-    # Clean up angle rotations for reading
-    plt.setp(g.ax_heatmap.get_yticklabels(), rotation=0, weight="bold", fontsize=9)
+    # Clean up angle rotations for reading heatmap ticks
+    plt.setp(g.ax_heatmap.get_yticklabels(), rotation=0, weight="bold", fontsize=5)
     if show_gene_labels:
         plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90, fontsize=8)
 
+    # Simple layout padding adjustment to prevent text clipping
+    g.fig.subplots_adjust(left=0.05, right=0.80, top=0.92, bottom=0.10)
+
+    # 2. Extract the physical layout coordinates of the matrix ceiling
+    hm_pos = g.ax_heatmap.get_position()
+    
+    # 3. Anchor the text blocks perfectly right above that ceiling
+    # This completely bypasses the invisible column dendrogram gap
+    title_vertical_position = hm_pos.ymax + 0.06
+
+    # Clean subtitle that tells the reader what the colors mean
     g.fig.suptitle(
-        "Accessory Genome Hierarchical Clustering Map",
-        fontsize=14,
+        "Accessory Genome Hierarchical Clustering Map\n(Blue = Gene Presence, White = Gene Absence)",
+        fontsize=13,
         weight="bold",
-        y=1.02,
+        x=0.45,
+        y=title_vertical_position,
     )
 
     # 3. Save figure to disk
