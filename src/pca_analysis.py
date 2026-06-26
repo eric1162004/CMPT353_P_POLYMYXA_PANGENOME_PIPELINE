@@ -74,8 +74,6 @@ def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
         fontsize=11,
         weight="bold",
     )
-
-    # Add a clean grid and tighten the layout
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
 

@@ -21,17 +21,22 @@ in a t-SNE embedding does not accurately reflect their true distance or global
 relationship in the high-dimensional space. Only local proximity is highly reliable.
 """
 
+# NOTE: This code block is included to suppress warning from sklearn
+# Scikit-learn tries to detect the system's physical CPU cores to
+# optimize thread distribution. Calculate available logical threads.
+# ------------------------------------------------------------------------
 import os
+
+total_cores = os.cpu_count()
+os.environ["LOKY_MAX_CPU_COUNT"] = str(total_cores if total_cores else 4)
+# ------------------------------------------------------------------------
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.metrics import pairwise_distances
 import config
 
-# Scikit-learn tries to detect your system's physical CPU cores to 
-# optimize thread distribution. Calculate available logical threads.
-total_cores = os.cpu_count()
-os.environ["LOKY_MAX_CPU_COUNT"] = str(total_cores if total_cores else 4)
 
 def run_tsne_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.TSNE_PLOT):
     """
@@ -84,43 +89,30 @@ def run_tsne_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.TSNE_PLOT)
     df_tsne = pd.DataFrame(X_tsne, columns=["t-SNE 1", "t-SNE 2"], index=strain_ids)
 
     # 4. Generate Visualization
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     plt.scatter(
-        df_tsne["t-SNE 1"],  # x-coord
-        df_tsne["t-SNE 2"],  # y-coord
-        c="#d97d24",  # Color of the markers
-        s=100,  # Size of the markers
-        alpha=0.8,  # transparency of the markers
-        edgecolors="black",  # solid black border around the perimeter of each marker point
-        linewidths=1.5,  # thickness of the border
+        df_tsne["t-SNE 1"],
+        df_tsne["t-SNE 2"],
+        c="#2b5c8f",
+        s=100,
+        alpha=0.8,
+        edgecolors="black",
+        linewidths=1.5,
     )
-
-    # Annotation
-    for strain, row in df_tsne.iterrows():
-        plt.annotate(
-            strain,  # the actual text string to be display
-            (row["t-SNE 1"], row["t-SNE 2"]),
-            textcoords="offset points",  # interpret xytext as coord relative to the points
-            xytext=(0, 10),  # 0 pounts horizonally and 10 points vertically
-            ha="center",  # align centered over the x-coord of the marker
-            fontsize=9,
-            weight="bold",  # text in bold
-        )
-
-    plt.xlabel("t-SNE Dimension 1", fontsize=11, weight="bold")
-    plt.ylabel("t-SNE Dimension 2", fontsize=11, weight="bold")
     plt.title(
         "Pangenome Neighborhoods via Non-Linear t-SNE",
         fontsize=13,
         weight="bold",
         pad=15,
     )
+    plt.xlabel("t-SNE Dimension 1", fontsize=11, weight="bold")
+    plt.ylabel("t-SNE Dimension 2", fontsize=11, weight="bold")
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()  # fixes the common issue where text overlays or clips out of view
 
-    # Save figure to disk
+    # Save figure
     plt.savefig(plot_path, dpi=300)
-    plt.close()  # removing plot from computer's memory
+    plt.close()
     print(f"t-SNE cluster plot exported directly to: {plot_path}\n")
 
     return df_tsne
