@@ -22,16 +22,18 @@ relationship in the high-dimensional space. Only local proximity is highly relia
 """
 
 import os
+
+# Scikit-learn tries to detect your system's physical CPU cores to
+# optimize thread distribution. Calculate available logical threads.
+total_cores = os.cpu_count()
+os.environ["LOKY_MAX_CPU_COUNT"] = str(total_cores if total_cores else 4)
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.metrics import pairwise_distances
 import config
 
-# Scikit-learn tries to detect your system's physical CPU cores to 
-# optimize thread distribution. Calculate available logical threads.
-total_cores = os.cpu_count()
-os.environ["LOKY_MAX_CPU_COUNT"] = str(total_cores if total_cores else 4)
 
 def run_tsne_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.TSNE_PLOT):
     """
