@@ -41,16 +41,16 @@ def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
     X_pca = pca.fit_transform(X)
 
     # Capture variance explain
-    var_exp = pca.explained_variance_ratio_ * 100
+    explained_variance = pca.explained_variance_ratio_ * 100
     print(
-        f"PCA complete. PC1 explains {var_exp[0]:.1f}%, PC2 explains {var_exp[1]:.1f}%"
+        f"PCA complete. PC1 explains {explained_variance[0]:.1f}%, PC2 explains {explained_variance[1]:.1f}%"
     )
 
     # Construct coordinates DataFrame
     df_pca = pd.DataFrame(X_pca, columns=["PC1", "PC2"], index=strain_ids)
 
-    # Generate the scientific visualization
-    plt.figure(figsize=(8, 6))
+    # Draw the scatter plot
+    plt.figure(figsize=(10, 8))
     plt.scatter(
         df_pca["PC1"],
         df_pca["PC2"],
@@ -60,18 +60,24 @@ def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
         edgecolors="black",
         linewidths=1.5,
     )
+    plt.title(
+        "P. polymyxa Pangenome Structural Variance (PCA)",
+        fontsize=14,
+        weight="bold",
+        pad=15,
+    )
+    plt.xlabel(
+        f"Principal Component 1 ({explained_variance[0]:.1f}%)", fontsize=11, weight="bold"
+    )
+    plt.ylabel(
+        f"Principal Component 2 ({explained_variance[1]:.1f}%)",
+        fontsize=11,
+        weight="bold",
+    )
 
-    # Annotate points with their strain IDs
-    for strain, row in df_pca.iterrows():
-        plt.annotate(
-            strain,
-            (row["PC1"], row["PC2"]),
-            textcoords="offset points",
-            xytext=(0, 10),
-            ha="center",
-            fontsize=9,
-            weight="bold",
-        )
+    # Add a clean grid and tighten the layout
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.tight_layout()
 
     # Save figure
     plt.savefig(plot_path, dpi=300)
