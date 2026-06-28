@@ -30,8 +30,11 @@ EMBEDDING_CSV = os.path.join(OUTPUT_DIR, "autoencoder_latent_coords.csv")
 PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
 HEATMAP_PLOT = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
 PCA_PLOT = os.path.join(OUTPUT_DIR, "pca_clusters.png")
+PCA_KMEANS_PLOT = os.path.join(OUTPUT_DIR, "pca_kmeans.png")
 TSNE_PLOT = os.path.join(OUTPUT_DIR, "tsne_clusters.png")
 NN_PLOT = os.path.join(OUTPUT_DIR, "nn_latent_space.png")
+NN_KMEANS_PLOT = os.path.join(OUTPUT_DIR, "nn_kmeans.png")
+AUTOENCODER_LOSS_PLOT = os.path.join(OUTPUT_DIR, "autoencoder_loss.png")
 
 # Downstream Biomarker Outputs
 NN_DRIVERS_CSV = os.path.join(OUTPUT_DIR, "nn_driver_genes.csv")

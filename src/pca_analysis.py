@@ -14,7 +14,9 @@ from sklearn.decomposition import PCA
 import config
 
 
-def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
+def run_pca_analysis(
+    matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT, cluster_labels=None
+):
     """
     Loads the presence/absence matrix, fits a 2-component PCA model,
     and exports a scatter plot of the genomic variations.
@@ -51,15 +53,31 @@ def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
 
     # Draw the scatter plot
     plt.figure(figsize=(10, 8))
-    plt.scatter(
-        df_pca["PC1"],
-        df_pca["PC2"],
-        c="#2b5c8f",
-        s=100,
-        alpha=0.8,
-        edgecolors="black",
-        linewidths=1.5,
-    )
+
+    # Handle multiple labels
+    if cluster_labels is not None:
+        scatter = plt.scatter(
+            df_pca["PC1"],
+            df_pca["PC2"],
+            c=cluster_labels,
+            cmap="Set1",  # High-contrast categorical palette for clusters
+            s=100,
+            alpha=0.8,
+            edgecolors="black",
+            linewidths=1.5,
+        )
+        plt.legend(*scatter.legend_elements(), title="Clusters", loc="upper right")
+    else:
+        plt.scatter(
+            df_pca["PC1"],
+            df_pca["PC2"],
+            c="#2b5c8f",  # Default fallback solid blue color
+            s=100,
+            alpha=0.8,
+            edgecolors="black",
+            linewidths=1.5,
+        )
+
     plt.title(
         "P. polymyxa Pangenome Structural Variance (PCA)",
         fontsize=14,
@@ -67,7 +85,9 @@ def run_pca_analysis(matrix_path=config.MATRIX_CSV, plot_path=config.PCA_PLOT):
         pad=15,
     )
     plt.xlabel(
-        f"Principal Component 1 ({explained_variance[0]:.1f}%)", fontsize=11, weight="bold"
+        f"Principal Component 1 ({explained_variance[0]:.1f}%)",
+        fontsize=11,
+        weight="bold",
     )
     plt.ylabel(
         f"Principal Component 2 ({explained_variance[1]:.1f}%)",

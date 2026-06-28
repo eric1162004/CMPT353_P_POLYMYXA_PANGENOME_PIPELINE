@@ -12,22 +12,20 @@ Raw Strain Row                                Bottleneck Space                  
 [1, 0, 1, ..., 0]  ─────────► ENCODER ─────────►  ( X , Y )  ─────────► DECODER ─────────► [0.94, 0.02, 0.89, ..., 0.01]
 (5900+ Gene Realities)                       (Hypothesized Group)                    (Model Confidence Vectors)
 
-The encoder looks at the global variance of all 5,900+ accessory genes simultaneously. 
+The encoder looks at the global variance of all 5,900+ accessory genes simultaneously.
 It compresses this high-dimensional information down into two continuous variables.
 
-The decoder acts as the validation mechanism for the encoder's groupings. It takes 
-those two coordinate points and tries to reconstruct the original 5,900-gene binary 
+The decoder acts as the validation mechanism for the encoder's groupings. It takes
+those two coordinate points and tries to reconstruct the original 5,900-gene binary
 blueprint.
 
-The output is a vector of decimal probabilities. These decimals reflect the model's 
-confidence based on the local genetic density of that cluster. If the decoder can 
-reconstruct the original genome with high confidence, it proves that the encoder's 
+The output is a vector of decimal probabilities. These decimals reflect the model's
+confidence based on the local genetic density of that cluster. If the decoder can
+reconstruct the original genome with high confidence, it proves that the encoder's
 2D map successfully captured the true, underlying biological rules of the population.
 """
 
 import os
-from re import M
-from matplotlib.lines import lineStyles
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -42,24 +40,19 @@ class PangenomeAutoencoder(nn.Module):  # inherit nn.Module
     Symmetric multi-layer feedforward Autoencoder architecture
     """
 
-    def __init__(self, input_dim, latent_dim=2):
+    def __init__(self, input_dim, latent_dim=4):
         super(PangenomeAutoencoder, self).__init__()
 
-        # Encoder: Compresses high-dimensional gene vectors
-        # down to latent space
+        # Encoder: Compresses high-dimensional gene vectors down to latent space
         self.encoder = nn.Sequential(
-            nn.Linear(input_dim, 128),  # condenses input gene into 128 channels
-            nn.BatchNorm1d(
-                128
-            ),  # normalize those  128 channels; keeps the pipeline stable
-            nn.ReLU(),  # non-linear processing
-            nn.Dropout(
-                0.2
-            ),  # randomly turns off 20% of the channels; prevent overfitting
-            nn.Linear(128, 32),  # more condensation: 128 into 32 channels
+            nn.Linear(input_dim, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+            #nn.Dropout(0.2),
+            nn.Linear(128, 32),
             nn.BatchNorm1d(32),
             nn.ReLU(),
-            nn.Linear(32, latent_dim),  # finally condense to 2 values
+            nn.Linear(32, latent_dim),
         )
 
         # Decoder: Reconstructs the compressed embedding back to the
@@ -71,9 +64,9 @@ class PangenomeAutoencoder(nn.Module):  # inherit nn.Module
             nn.Linear(32, 128),
             nn.BatchNorm1d(128),
             nn.ReLU(),
-            nn.Dropout(0.2),
+            #nn.Dropout(0.2),
             nn.Linear(128, input_dim),
-            nn.Sigmoid(),  # Restricts outputs to a value between 0 and 1
+            nn.Sigmoid(),  # Restricts outputs to probabilities between 0 and 1
         )
         """
         The outcome of the decoder represent the confidence level that 
@@ -101,10 +94,10 @@ class PangenomeAutoencoder(nn.Module):  # inherit nn.Module
         0.80. It is a direct reflection of the local genetic density of that cluster.
         """
 
-    def forward(self, x): # PyTorch will automatically executes this
-        latent = self.encoder(x) # Phase 1
-        reconstructed = self.decoder(latent) # Phase 2
-        return latent, reconstructed # save results from Phase 1 and Phase 2 
+    def forward(self, x):
+        latent = self.encoder(x)
+        reconstructed = self.decoder(latent)
+        return latent, reconstructed
 
 
 def train_autoencoder(
@@ -112,6 +105,7 @@ def train_autoencoder(
     latent_path=config.EMBEDDING_CSV,
     epochs=100,
     batch_size=2,
+    latent_dim=4,
 ):
     """
     Loads pangenome data, handles structural edge cases for small test sets,
@@ -132,8 +126,6 @@ def train_autoencoder(
     total_strains = X_data.shape[0]
 
     # Dynamic adjustment for the small dataset (ie. 4 strains):
-    # BatchNorm1d requires more than 1 sample per batch, and training deep nets
-    # on tiny matrices can result in overfit.
     if total_strains <= 4:
         print(
             "Small cohort detected. Switching architecture to stable training mode (disabling BatchNorm)."
@@ -142,7 +134,18 @@ def train_autoencoder(
         epochs = 200  # More iterations -> converge smoothly
 
     # Instantiate model
-    model = PangenomeAutoencoder(input_dim=input_dim, latent_dim=2)
+    model = PangenomeAutoencoder(input_dim=input_dim, latent_dim=latent_dim)
+
+    # Binary Cross Entropy is optimal for evaluating reconstruction error of
+    # 0/1 vectors
+    criterion = (
+        nn.BCELoss()
+    )  # is used to compute how far off the decoder's decimal predictions are from the true 0/1 genomic inputs
+    #optimizer = optim.AdamW(model.parameters(), lr=0.01, weight_decay=1e-4)
+    optimizer = optim.AdamW(model.parameters(), lr=0.005, weight_decay=0)
+
+    # Training Loop
+    model.train()
 
     # Deactivate BatchNorm if batch size is too small to calculate variance
     if total_strains <= 4:
@@ -150,24 +153,18 @@ def train_autoencoder(
             if isinstance(module, nn.BatchNorm1d):
                 module.eval()
 
-    # Binary Cross Entropy is optimal for evaluating reconstruction error of
-    # 0/1 vectors
-    criterion = nn.BCELoss() # is used to compute how far off the decoder's decimal predictions are from the true 0/1 genomic inputs
-    optimizer = optim.AdamW(model.parameters(), lr=0.01, weight_decay=1e-4)
-
-    # Training Loop
-    model.train()
     loss_history = []
-
     print(f"training model across {epochs} epochs..")
 
     for epoch in range(1, epochs + 1):
         # Basic mini-batch slicing
-        permutation = torch.randperm(X_data.size()[0]) # Shuffle all strain row indexes randomly
+        permutation = torch.randperm(
+            X_data.size()[0]
+        )  # Shuffle all strain row indexes randomly
         epoch_loss = 0.0
         batches = 0
 
-        for i in range(0, X_data.size()[0], batch_size): 
+        for i in range(0, X_data.size()[0], batch_size):
             indices = permutation[i : i + batch_size]
             batch_x = X_data[indices]
 
@@ -175,13 +172,15 @@ def train_autoencoder(
                 continue  # Skip trailing single-sample batches to preserve batchnorm stability
 
             # Forward pass
-            optimizer.zero_grad() # Clear out old gradients
-            latent, reconstructed = model(batch_x) # run the forward pass
-            loss = criterion(reconstructed, batch_x) # grade the model's performation on this batch
+            optimizer.zero_grad()  # Clear out old gradients
+            latent, reconstructed = model(batch_x)  # run the forward pass
+            loss = criterion(
+                reconstructed, batch_x
+            )  # grade the model's performation on this batch
 
             # Backward pass
-            loss.backward() # trace the error background
-            optimizer.step() # updates the weights
+            loss.backward()  # trace the error background
+            optimizer.step()  # updates the weights
 
             epoch_loss += loss.item()
             batches += 1
@@ -200,13 +199,14 @@ def train_autoencoder(
         latent_array = latent_embeddings.numpy()
 
     # Constract and save coords dataframe
+    latent_columns = [f"Latent Dimension {i}" for i in range(1, latent_dim + 1)]
     df_latent = pd.DataFrame(
         latent_array,
-        columns=["Latent Dimension 1", "Latent Dimension 2"],
+        columns=latent_columns,
         index=strain_ids,
     )
     df_latent.to_csv(latent_path)
-    print(f"Latent space coords exported directly to: {latent_path}")
+    print(f"Latent space coords ({latent_dim}D) exported directly to: {latent_path}")
 
     # Generate loss convergence plot to verify training behavior
     plt.figure(figsize=(6, 4))
