@@ -3,11 +3,10 @@ CMPT353_P_POLYMYXA_PANGENOME_PIPELINE - Pathogenicity Predictor
 
 This module scans the accessory genome profile of each strain for high-risk
 functional terms (virulence, toxins, antibiotics resistance) and computes
-a comparative pathogenicity rish index.
+a comparative pathogenicity risk index.
 """
 
 import os
-from matplotlib import axis
 import pandas as pd
 import numpy as np
 import config
@@ -19,7 +18,7 @@ def evaluate_strain_risk(df_matrix):
     a normalized risk index per strain.
     """
     print(
-        "Scanning accessory genome for high-rish clinical and environmental factors..."
+        "Scanning accessory genome for high-risk clinical and environmental factors..."
     )
 
     risk_keywords = [
@@ -41,33 +40,37 @@ def evaluate_strain_risk(df_matrix):
             matched_genes.append(gene)
 
     print(
-        f"Identified {len(matched_genes)} potnetial risk-associated features in global pool."
+        f"Identified {len(matched_genes)} potential risk-associated features in global pool."
     )
 
     if not matched_genes:
         print("No high-risk keyword signatures found in the current pangenome pool.")
-        # Fallback to empty dataframe with standard schema
         return pd.DataFrame(
-            columns=["Risk_Associated_Gene_Count", "Pathogenicity_Risk_Index"],
+            {
+                "Risk_Associated_Gene_Count": 0,
+                "Pathogenicity_Risk_Index": 0.0,
+            },
             index=df_matrix.index,
         )
 
     # Isolate matrix to only risk features
     df_risk_matrix = df_matrix[matched_genes]
 
-    # Calculate absolute count of risk features possesed by each strain (row sums)
-    risk_counts = df_risk_matrix.sum(axis=0)  # Total strains containing each risk gene
-    strain_risk_counts = df_risk_matrix.sum(axis=1)  # Risk genes per individual stain
+    # Calculate absolute count of risk features possessed by each strain (row sums)
+    strain_risk_counts = df_risk_matrix.sum(axis=1, numeric_only=True)
 
-    # Normalize score btw 0.0 to 1.0 based on max possible detected risk genes
-    max_detected = max(strain_risk_counts.max(), 1)
+    # Normalize score between 0.0 to 1.0 based on max possible detected risk genes
+    max_detected = int(strain_risk_counts.max())
+    max_detected = max_detected if max_detected > 0 else 1
+    
     risk_index = strain_risk_counts / max_detected
 
     df_profiles = pd.DataFrame(
         {
             "Risk_Associated_Gene_Count": strain_risk_counts,
             "Pathogenicity_Risk_Index": np.round(risk_index, 3),
-        }
+        },
+        index=df_matrix.index
     )
 
     return df_profiles.sort_values(by="Pathogenicity_Risk_Index", ascending=False)
