@@ -24,20 +24,14 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Data Pipeline Outputs
 MATRIX_CSV = os.path.join(OUTPUT_DIR, "pangenome_matrix.csv")
 STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
-EMBEDDING_CSV = os.path.join(OUTPUT_DIR, "autoencoder_latent_coords.csv")
 
 # Visualization Outputs (Check these names carefully!)
 PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
 HEATMAP_PLOT = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
 PCA_PLOT = os.path.join(OUTPUT_DIR, "pca_clusters.png")
 PCA_KMEANS_PLOT = os.path.join(OUTPUT_DIR, "pca_kmeans.png")
-TSNE_PLOT = os.path.join(OUTPUT_DIR, "tsne_clusters.png")
-NN_PLOT = os.path.join(OUTPUT_DIR, "nn_latent_space.png")
-NN_KMEANS_PLOT = os.path.join(OUTPUT_DIR, "nn_kmeans.png")
-AUTOENCODER_LOSS_PLOT = os.path.join(OUTPUT_DIR, "autoencoder_loss.png")
 
 # Downstream Biomarker Outputs
-NN_DRIVERS_CSV = os.path.join(OUTPUT_DIR, "nn_driver_genes.csv")
 PCA_LOADINGS_CSV = os.path.join(OUTPUT_DIR, "pca_driver_genes.csv")
 PATHOGENICITY_RISK_CSV = os.path.join(OUTPUT_DIR, "pathogenicity_risk_profile.csv")
 
@@ -47,13 +41,3 @@ PATHOGENICITY_RISK_CSV = os.path.join(OUTPUT_DIR, "pathogenicity_risk_profile.cs
 # K-Means Clustering Settings
 K_MEAN_CLUSTERS = 2
 RANDOM_STATE = 42
-
-# t-SNE Settings
-TSEN_PERPLEXITY = 2  # Scalable up to 5-30 for full 80-Strain cohort
-TSNE_ITERATIONS = 1000
-
-# Deep Learning (PyTorch Autoencoder) Settings
-NN_EPOCHS = 100
-NN_LEARNING_RATE = 0.01
-NN_LATENT_DIM = 2
-NN_HIDDEN_DIM = 256
