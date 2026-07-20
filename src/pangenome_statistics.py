@@ -30,7 +30,7 @@ def calculate_pangenome_stats(
     Loads the binary matrix, evaluates gene freqs, and classifies
     features into core, shell, and cloud genomic layers.
     """
-    print(f"Loading binary matrix from: {matrix_path}")
+    #print(f"Loading binary matrix from: {matrix_path}")
     if not os.path.exists(matrix_path):
         print(f"Error: Matrix file missing.")
         return None
@@ -40,7 +40,7 @@ def calculate_pangenome_stats(
     total_strains = len(df)
     total_genes = df.shape[1]
 
-    print(f"Analyzing {total_genes} total unique genes across {total_strains} strains.")
+    #print(f"Analyzing {total_genes} total unique genes across {total_strains} strains.")
 
     # 1. Calculate how many strains possess each gene (Column-wise sum)
     gene_counts = df.sum(axis=0)
@@ -80,7 +80,8 @@ def calculate_pangenome_stats(
 
     df_stats = pd.DataFrame(stats_data)
     df_stats.to_csv(output_csv, index=False)
-    print(f"Statistical profile saved directly to: {output_csv}")
+    
+    #print(f"Statistical profile saved directly to: {output_csv}")
 
     return {
         "summary_table": df_stats,
@@ -126,7 +127,8 @@ def plot_pangenome_distribution(df_stats, save_path=config.PIE_CHART_PLOT):
     # Export clear image file straight to disk
     plt.savefig(save_path, dpi=300)
     plt.close()
-    print(f"Pie chart exported to: {save_path}\n")
+    
+    #print(f"Pie chart exported to: {save_path}\n")
 
 
 def run_pangenome_analytics():

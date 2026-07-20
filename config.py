@@ -23,17 +23,19 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # =====================================================================
 # Data Pipeline Outputs
 MATRIX_CSV = os.path.join(OUTPUT_DIR, "pangenome_matrix.csv")
-STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
+STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "stat_summary.csv")
 
 # Visualization Outputs (Check these names carefully!)
+HCA_DENDROGRAM_PLOT = os.path.join(OUTPUT_DIR, "hca_dendrogram.png")
 PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
-HEATMAP_PLOT = os.path.join(OUTPUT_DIR, "accessory_genome_heatmap.png")
 PCA_PLOT = os.path.join(OUTPUT_DIR, "pca_clusters.png")
 PCA_KMEANS_PLOT = os.path.join(OUTPUT_DIR, "pca_kmeans.png")
+PCA_HCA_PLOT = os.path.join(OUTPUT_DIR, "pca_hca_clusters.png")
 
 # Downstream Biomarker Outputs
 PCA_LOADINGS_CSV = os.path.join(OUTPUT_DIR, "pca_driver_genes.csv")
 PATHOGENICITY_RISK_CSV = os.path.join(OUTPUT_DIR, "pathogenicity_risk_profile.csv")
+HCA_CLUSTERS_CSV = os.path.join(OUTPUT_DIR, "hca_clusters.csv")  
 
 # =====================================================================
 # 3. ALGORITHM HYPERPARAMETERS
