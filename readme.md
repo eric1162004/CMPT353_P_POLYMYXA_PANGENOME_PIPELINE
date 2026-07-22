@@ -2,7 +2,7 @@
 
 ## 🔬 Overview
 
-This bioinformatic data science pipeline processes raw genomic draft assemblies into a structured mathematical format to perform unsupervised machine learning on ***Paenibacillus polymyxa*** strains. It addresses the fundamental challenge of resolving ambiguous species boundaries, evaluating evolutionary sub-lineages, and automating risk-based functional profiling in the absence of empirical pathogenicity data.
+This bioinformatic data science pipeline processes raw genomic draft assemblies into a structured mathematical format to perform unsupervised machine learning on ***Paenibacillus polymyxa*** strains. It addresses the fundamental challenge of resolving ambiguous species boundaries, evaluating evolutionary sub-lineages, and targeted risk-based functional profiling in the absence of empirical pathogenicity data.
 
 ---
 
