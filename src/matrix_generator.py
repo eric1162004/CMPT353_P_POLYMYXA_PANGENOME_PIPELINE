@@ -24,8 +24,8 @@ import utils
 
 def parse_single_gff(gff_path):
     """
-    Parses a single GFF3 file to extract, clean, and compile a unique set 
-    of functional coding sequences (CDS), filtering out structural RNAs and 
+    Parses a single GFF3 file to extract, clean, and compile a unique set
+    of functional coding sequences (CDS), filtering out structural RNAs and
     hypothetical proteins.
     """
     gene_set = set()
@@ -64,7 +64,7 @@ def parse_single_gff(gff_path):
                 completely blank or omits it.
                 
                 The product= string describes the literal protein function. By pulling from product= 
-                when gene= is missing, your script ensures that recognized metabolic enzymes are 
+                when gene= is missing, the script ensures that recognized metabolic enzymes are 
                 still captured
                 
                 .group(0) always returns the entire matched text
@@ -87,7 +87,7 @@ def parse_single_gff(gff_path):
 
 def vectorize_pangenome(strain_gene_sets, global_pangenome_genes):
     """
-    Converts individual strain gene sets into a standardized 
+    Converts individual strain gene sets into a standardized
     binary presence-absence Pandas DataFrame matrix.
     """
     matrix_rows = []
@@ -114,18 +114,15 @@ def vectorize_pangenome(strain_gene_sets, global_pangenome_genes):
 
 def run_matrix_generation(data_dir=config.DATA_DIR, output_path=config.MATRIX_CSV):
     """
-    Locates strain subdirectories, parses GFF3 annotations, computes the global 
+    Locates strain subdirectories, parses GFF3 annotations, computes the global
     pangenome feature union, and exports the resulting binary matrix to CSV.
     """
-    #print(f"Starting Data extraction from: {data_dir}")
-
     # 1. Locate all individual strain subdir
     strain_folders = glob.glob(os.path.join(data_dir, "GCF_*"))
     if not strain_folders:
         print(f"Error: No strain folders starting with 'GCF_' found in {data_dir}")
         return None
 
-    #print(f"Found {len(strain_folders)} strain assemblies to parse.")
     strain_gene_sets = {}
 
     # 2. Parse genomic data
@@ -141,26 +138,18 @@ def run_matrix_generation(data_dir=config.DATA_DIR, output_path=config.MATRIX_CS
 
         # Call the parser unit
         strain_gene_sets[strain_id] = parse_single_gff(gff_files[0])
-        #print(
-        #    f"- {strain_id}: Extracted {len(strain_gene_sets[strain_id])} unique functional genes."
-        #)
 
     # 3. Build master list of unique genes, sorted alphabetically
     """
     Take Union: {"paaa", "ente", "gyra"} U {"ente", "gyra", "dnad"} U ... 
     """
     global_panenome_genes = sorted(list(set.union(*strain_gene_sets.values())))
-    #print(
-    #    f"Global Pangenome vector built. Total unique features: {len(global_panenome_genes)}"
-    #)
 
     # 4. Vectorize
     pangenome_matrix = vectorize_pangenome(strain_gene_sets, global_panenome_genes)
 
     # 5. Export results
     pangenome_matrix.to_csv(output_path)
-    
-    #print(f"Success! Binary Matrix saved directly to: {output_path}\n")
 
     return pangenome_matrix
 

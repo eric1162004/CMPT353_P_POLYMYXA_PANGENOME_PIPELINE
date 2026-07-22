@@ -13,7 +13,7 @@ import config
 
 def run_kmeans_clustering(
     df_coords,
-    k=4,
+    k=4, # (k=4 based on 2024 literature)
     plot_name="pca_kmeans.png",
     plot_title="K-Means Clustering",
     xlabel="PC1",
@@ -21,7 +21,7 @@ def run_kmeans_clustering(
 ):
     """
     Accepts any 2D coordinate dataframe, assigns strains to k clusters,
-    and generates a colored scatter plot. (k=4 based on 2024 literature)
+    and generates a colored scatter plot. 
     """
     if df_coords is None or df_coords.empty:
         print("Error: No coordinates provided to K-Means.")
@@ -34,8 +34,6 @@ def run_kmeans_clustering(
         )
         k = total_strains
 
-    # print(f"Fitting K-Means model to discover {k} sub-lineages...")
-
     # Fit K-Means centroid model directly on the reduced coordinate space to assign cluster IDs
     kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
     coords_array = df_coords.values
@@ -45,11 +43,8 @@ def run_kmeans_clustering(
     df_clusters = df_coords.copy()
     df_clusters["Cluster"] = cluster_labels
 
-    # Construct, style, and serialize the spatial cluster scatter plot graphic
-    plot_path = os.path.join(config.OUTPUT_DIR, plot_name)
     plt.figure(figsize=(10, 8))
 
-    # Render data points using distinct colormap mappings to visualize group separation
     scatter = plt.scatter(
         df_clusters.iloc[:, 0],  # X-axis (e.g., PC1)
         df_clusters.iloc[:, 1],  # Y-axis (e.g., PC2)
@@ -70,9 +65,7 @@ def run_kmeans_clustering(
     )
     plt.tight_layout()
 
-    plt.savefig(plot_path, dpi=300)
+    plt.savefig(os.path.join(config.OUTPUT_DIR, plot_name), dpi=300)
     plt.close()
-
-    # print(f"Colored K-Means cluster plot exported to: {plot_path}\n")
 
     return df_clusters

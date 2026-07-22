@@ -36,10 +36,3 @@ PCA_HCA_PLOT = os.path.join(OUTPUT_DIR, "pca_hca_clusters.png")
 PCA_LOADINGS_CSV = os.path.join(OUTPUT_DIR, "pca_driver_genes.csv")
 PATHOGENICITY_RISK_CSV = os.path.join(OUTPUT_DIR, "pathogenicity_risk_profile.csv")
 HCA_CLUSTERS_CSV = os.path.join(OUTPUT_DIR, "hca_clusters.csv")  
-
-# =====================================================================
-# 3. ALGORITHM HYPERPARAMETERS
-# =====================================================================
-# K-Means Clustering Settings
-K_MEAN_CLUSTERS = 2
-RANDOM_STATE = 42

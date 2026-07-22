@@ -19,7 +19,6 @@ def plot_hca_dendrogram(df_matrix, save_path):
     """
     Computes the linkage matrix and plots the evolutionary branching dendrogram.
     """
-    # print("Computing linkage matrix for HCA dendrogram...")
 
     linkage_matrix = sch.linkage(df_matrix, method="complete", metric="jaccard")
 
@@ -45,8 +44,6 @@ def plot_hca_dendrogram(df_matrix, save_path):
 
     plt.savefig(save_path, dpi=300)
     plt.close()
-
-    # print(f"HCA dendrogram exported to: {save_path}")
 
 
 def plot_hca_on_pca(df_pca, df_clusters, plot_path, xlabel="PC1", ylabel="PC2"):
@@ -82,17 +79,14 @@ def run_hca_clustering(
     Loads the matrix, exports the dendrogram visualization, fits the HCA model,
     and exports the tabular cluster assignments.
     """
-    # print(f"Loading matrix for HCA from: {matrix_path}")
     if not os.path.exists(matrix_path):
         print("Error: Matrix file missing. Cannot run HCA.")
         return None
 
     df = pd.read_csv(matrix_path, index_col=0)
 
-    # Generate and save the visualization
     plot_hca_dendrogram(df, config.HCA_DENDROGRAM_PLOT)
 
-    # Fit mathematical HCA model
     hca = AgglomerativeClustering(
         n_clusters=n_clusters, metric="jaccard", linkage="complete"
     )
@@ -103,8 +97,6 @@ def run_hca_clustering(
     df_clusters.index.name = "Strain_ID"
 
     df_clusters.to_csv(config.HCA_CLUSTERS_CSV)
-
-    # print(f"\nHCA cluster assignments exported to: {output_csv_path}\n")
 
     return df_clusters
 

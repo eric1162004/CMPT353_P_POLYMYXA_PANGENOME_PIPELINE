@@ -38,14 +38,12 @@ class PangenomePCA:
         df = pd.read_csv(matrix_path, index_col=0)
         self.feature_names = df.columns.to_list()
 
-        # Fit principal component analysis model to project binary features into 2D space
         self.model = PCA(n_components=2)
         X_pca = self.model.fit_transform(df.values)
 
         # Calculate percentage of total variance explained by each principal component
         variance = self.model.explained_variance_ratio_ * 100
 
-        # Generate and save the PCA scatter plot visualization
         self._generate_plot(X_pca, plot_path, cluster_labels, variance)
 
         return pd.DataFrame(X_pca, columns=["PC1", "PC2"], index=df.index)
@@ -53,7 +51,6 @@ class PangenomePCA:
     def _generate_plot(self, X_pca, plot_path, cluster_labels, variance):
         plt.figure(figsize=(10, 8))
 
-        # Render scatter plot coordinates with optional cluster coloring styles
         scatter = plt.scatter(
             X_pca[:, 0],
             X_pca[:, 1],
@@ -64,7 +61,6 @@ class PangenomePCA:
             linewidths=1.5,
         )
 
-        # Dynamic Labels
         plt.title(
             "P. polymyxa Pangenome Structural Variance (PCA)",
             fontsize=14,

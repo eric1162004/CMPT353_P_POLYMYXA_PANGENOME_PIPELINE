@@ -114,27 +114,21 @@ def evaluate_strain_target_profile(df_matrix, target_keywords):
 
 def run_target_profiling(
     matrix_path=config.MATRIX_CSV,
-    output_path=config.PATHOGENICITY_RISK_CSV, # Maintained config reference mapping if expected downstream
+    output_path=config.PATHOGENICITY_RISK_CSV,
     target_keywords=TARGET_KEYWORDS,
 ):
     """
     Main execution pathway for flexible functional profiling
     """
-    # print("Initializing Target Functional Profiler Engine..")
-    
     if not os.path.exists(matrix_path):
         print("Error: Master matrix missing. Cannot compute profiles.")
         return None
 
     df_matrix = pd.read_csv(matrix_path, index_col=0)
 
-    # Compute profiles
     df_target_profiles = evaluate_strain_target_profile(df_matrix, target_keywords)
 
-    # Export results
     df_target_profiles.to_csv(output_path)
-    
-    # print(f"Target functional profile records exported to: {output_path}\n")
 
     return df_target_profiles
 
