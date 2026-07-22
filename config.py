@@ -25,7 +25,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 MATRIX_CSV = os.path.join(OUTPUT_DIR, "pangenome_matrix.csv")
 STAT_SUMMARY_CSV = os.path.join(OUTPUT_DIR, "stat_summary.csv")
 
-# Visualization Outputs (Check these names carefully!)
+# Visualization Outputs 
 HCA_DENDROGRAM_PLOT = os.path.join(OUTPUT_DIR, "hca_dendrogram.png")
 PIE_CHART_PLOT = os.path.join(OUTPUT_DIR, "pangenome_pie_distribution.png")
 PCA_PLOT = os.path.join(OUTPUT_DIR, "pca_clusters.png")
