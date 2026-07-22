@@ -1,8 +1,4 @@
-# Unsupervised Pangenomic Analysis of *Paenibacillus polymyxa*
-
-> **Bioinformatic Pipeline for Genomic Architecture & Risk-Based Functional Profiling**
-
----
+# CMPT353_P_POLYMYXA_PANGENOME_PIPELINE 
 
 ## 🔬 Overview
 
