@@ -47,7 +47,7 @@ The recommended method for executing the project is via the interactive control 
 2. Open `CONTROL_PENEL.ipynb` in your Jupyter environment.
 3. Run the cells sequentially. The notebook will automatically import the modules from `src/` to:
    * **Generate the Matrix:** A custom parser extracts Coding Sequences (CDS) from the GFF3 files, explicitly filtering out hypothetical proteins, and builds a binary presence/absence matrix.
-   * **Stratify the Pangenome:** Genes are grouped by frequency into **Core** ($\ge 95\%$), **Shell** ($15	ext{--}95\%$), and **Cloud** ($<15\%$) layers.
+   * **Stratify the Pangenome:** Genes are grouped by frequency into **Core** ($\ge 95\%$), **Shell** ($15 \text{-} 95\%$), and **Cloud** ($<15\%$) layers.
    * **Extract Drivers & Cluster:** Performs Principal Component Analysis (PCA) to extract top gene-loading drivers, followed by partitioning the matrix using K-Means ($k=4$) and Hierarchical Cluster Analysis (HCA) using a Jaccard distance metric.
    * **Risk Screening:** Scans the gene column labels for target functional keywords (e.g., toxin, resistance, bacteriocin) to assign a normalized Pathogenicity Risk Index.
 

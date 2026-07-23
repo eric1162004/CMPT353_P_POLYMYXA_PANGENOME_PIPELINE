@@ -13,7 +13,7 @@ import config
 
 def run_kmeans_clustering(
     df_coords,
-    k=4, # (k=4 based on 2024 literature)
+    k=4,  # (k=4 based on 2024 literature)
     plot_name="pca_kmeans.png",
     plot_title="K-Means Clustering",
     xlabel="PC1",
@@ -21,7 +21,7 @@ def run_kmeans_clustering(
 ):
     """
     Accepts any 2D coordinate dataframe, assigns strains to k clusters,
-    and generates a colored scatter plot. 
+    and generates a colored scatter plot.
     """
     if df_coords is None or df_coords.empty:
         print("Error: No coordinates provided to K-Means.")
